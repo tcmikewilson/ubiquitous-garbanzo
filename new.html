@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Point Translation, Reflection, and Rotation on 4-Quadrant Grid</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+      margin-bottom: 20px;
+    }
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .control-section {
+      margin-bottom: 10px;
+    }
+    h3 {
+      margin-bottom: 5px;
+    }
+    button {
+      margin: 2px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Move, Reflect, and Rotate the Point on the Grid</h2>
+  <canvas id="grid" width="400" height="400"></canvas>
+  
+  <div class="controls">
+    <!-- Translation Controls -->
+    <div class="control-section">
+      <h3>Translation</h3>
+      <button onclick="movePoint('up')">Up</button><br>
+      <button onclick="movePoint('left')">Left</button>
+      <button onclick="movePoint('right')">Right</button><br>
+      <button onclick="movePoint('down')">Down</button>
+    </div>
+
+    <!-- Reflection Controls -->
+    <div class="control-section">
+      <h3>Reflection</h3>
+      <button onclick="reflectPoint('x')">Reflect over X-axis</button>
+      <button onclick="reflectPoint('y')">Reflect over Y-axis</button>
+    </div>
+
+    <!-- Rotation Controls -->
+    <div class="control-section">
+      <h3>Rotation</h3>
+      <button onclick="rotatePoint('cw')">Rotate 90° Clockwise</button>
+      <button onclick="rotatePoint('ccw')">Rotate 90° Counterclockwise</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('grid');
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    let point = { x: width / 2, y: height / 2 }; // Starting point at the center
+
+    // Function to draw the grid
+    function drawGrid() {
+      ctx.clearRect(0, 0, width, height);
+
+      // Draw horizontal line (X-axis)
+      ctx.beginPath();
+      ctx.moveTo(0, height / 2);
+      ctx.lineTo(width, height / 2);
+      ctx.stroke();
+
+      // Draw vertical line (Y-axis)
+      ctx.beginPath();
+      ctx.moveTo(width / 2, 0);
+      ctx.lineTo(width / 2, height);
+      ctx.stroke();
+
+      // Draw point
+      drawPoint();
+    }
+
+    // Function to draw the point
+    function drawPoint() {
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+      ctx.fillStyle = 'red';
+      ctx.fill();
+    }
+
+    // Function to move the point
+    function movePoint(direction) {
+      const step = 10;
+      if (direction === 'up') {
+        point.y -= step;
+      } else if (direction === 'down') {
+        point.y += step;
+      } else if (direction === 'left') {
+        point.x -= step;
+      } else if (direction === 'right') {
+        point.x += step;
+      }
+
+      // Ensure the point stays within the grid
+      point.x = Math.max(0, Math.min(width, point.x));
+      point.y = Math.max(0, Math.min(height, point.y));
+
+      drawGrid();
+    }
+
+    // Function to reflect the point over the X or Y axis
+    function reflectPoint(axis) {
+      if (axis === 'x') {
+        // Reflect over the X-axis
+        const distanceFromCenterY = point.y - height / 2;
+        point.y = height / 2 - distanceFromCenterY;
+      } else if (axis === 'y') {
+        // Reflect over the Y-axis
+        const distanceFromCenterX = point.x - width / 2;
+        point.x = width / 2 - distanceFromCenterX;
+      }
+
+      drawGrid();
+    }
+
+    // Function to rotate the point around the origin (90 degrees CW or CCW)
+    function rotatePoint(direction) {
+      // Calculate the coordinates relative to the center
+      const originX = width / 2;
+      const originY = height / 2;
+
+      const relativeX = point.x - originX;
+      const relativeY = point.y - originY;
+
+      let newX, newY;
+
+      if (direction === 'cw') {
+        // Rotate 90° clockwise
+        newX = relativeY;
+        newY = -relativeX;
+      } else if (direction === 'ccw') {
+        // Rotate 90° counterclockwise
+        newX = -relativeY;
+        newY = relativeX;
+      }
+
+      // Translate the new coordinates back to the canvas coordinates
+      point.x = originX + newX;
+      point.y = originY + newY;
+
+      drawGrid();
+    }
+
+    // Initialize the grid and point
+    drawGrid();
+  </script>
+</body>
+</html>

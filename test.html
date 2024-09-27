@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Point Translation on 4-Quadrant Grid</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+    .controls {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Move the Point on the Grid</h2>
+  <canvas id="grid" width="400" height="400"></canvas>
+  
+  <div class="controls">
+    <button onclick="movePoint('up')">Up</button>
+    <button onclick="movePoint('left')">Left</button>
+    <button onclick="movePoint('right')">Right</button>
+    <button onclick="movePoint('down')">Down</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('grid');
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    let point = { x: width / 2, y: height / 2 }; // Starting point at the center
+
+    // Function to draw the grid
+    function drawGrid() {
+      ctx.clearRect(0, 0, width, height);
+
+      // Draw horizontal line
+      ctx.beginPath();
+      ctx.moveTo(0, height / 2);
+      ctx.lineTo(width, height / 2);
+      ctx.stroke();
+
+      // Draw vertical line
+      ctx.beginPath();
+      ctx.moveTo(width / 2, 0);
+      ctx.lineTo(width / 2, height);
+      ctx.stroke();
+
+      // Draw point
+      drawPoint();
+    }
+
+    // Function to draw the point
+    function drawPoint() {
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+      ctx.fillStyle = 'red';
+      ctx.fill();
+    }
+
+    // Function to move the point
+    function movePoint(direction) {
+      const step = 10;
+      if (direction === 'up') {
+        point.y -= step;
+      } else if (direction === 'down') {
+        point.y += step;
+      } else if (direction === 'left') {
+        point.x -= step;
+      } else if (direction === 'right') {
+        point.x += step;
+      }
+
+      // Ensure the point stays within the grid
+      point.x = Math.max(0, Math.min(width, point.x));
+      point.y = Math.max(0, Math.min(height, point.y));
+
+      drawGrid();
+    }
+
+    // Initialize the grid and point
+    drawGrid();
+  </script>
+</body>
+</html>
+
